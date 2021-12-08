@@ -4,8 +4,6 @@ import styles from './layout.module.css'
 import utilStyles from '../styles/utils.module.css'
 import Link from 'next/link'
 
-import png from '../public/images/profile.jpg'
-console.log('png', png)
 const name = 'Fanpeichao'
 export const siteTitle = 'Next.js Sample Website'
 
@@ -59,7 +57,6 @@ export default function Layout({ children, home }) {
           </>
         )}
       </header>
-      <img src={png.src} alt="" />
       <main>{children}</main>
       {!home && (
         <div className={styles.backToHome}>

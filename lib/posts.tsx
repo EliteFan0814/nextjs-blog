@@ -1,25 +1,31 @@
-import fs, { promises as fsPromise } from 'fs'
+import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-export const getPosts = async () => {
-  const markdownDir = path.join(process.cwd(), 'markdown')
-  const fileNames = await fsPromise.readdir(markdownDir)
-  console.log(fileNames)
-  return fileNames.map((fileName) => {
-    const fullPath = path.join(markdownDir, fileName)
-    console.log(fullPath)
-    const id = fileName.replace(/\.md/g, '')
-    const text = fs.readFileSync(fullPath, 'utf-8')
-    const {
-      data: { title, date },
-      content
-    } = matter(text)
+// md文章路径
+const postsDirectory = path.join(process.cwd(), 'posts')
+
+export function getSortedPostsData() {
+  const fileNames = fs.readdirSync(postsDirectory)
+  const allPostsData = fileNames.map((fileName) => {
+    const id = fileName.replace(/.md$/, '')
+    //构建路径,读取文件内容
+    const fullPath = path.join(postsDirectory, fileName)
+    const fileContents = fs.readFileSync(fullPath, 'utf-8')
+    const matterResult = matter(fileContents)
     return {
-      title,
-      date,
-      content,
-      id
+      id,
+      ...matterResult.data
+    }
+  })
+  console.log('allPostsData', allPostsData)
+  return allPostsData.sort(({ date: a }, { date: b }) => {
+    if (a < b) {
+      return 1
+    } else if (a > b) {
+      return -1
+    } else {
+      return 0
     }
   })
 }
